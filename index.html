@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paint App By Shruthi T</title>
+    <meta name="description" content="JS Paint App - Shruthi T" />
+    <style>
+      body {
+        text-align: center;
+      }
+
+      #canvas {
+        width: 800px;
+        height: 500px;
+        border: 2px solid black;
+        margin: auto;
+      }
+
+      .rectangle {
+        position: absolute;
+      }
+
+      #clearButton {
+        margin-top: 25px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>Simple Paint App</h3>
+    <div id="canvas"></div>
+    <div><button id="clearButton">clear</button></div>
+    <script>
+      function initializeSimplePaintApp(canvas, clearButton) {
+        var mouse = {
+          x: 0,
+          y: 0,
+          startX: 0,
+          startY: 0
+        };
+        function setMousePosition(e) {
+          var ev = e || window.event; //Moz || IE
+          if (ev.pageX) {
+            //Moz
+            mouse.x = ev.pageX + window.pageXOffset;
+            mouse.y = ev.pageY + window.pageYOffset;
+          } else if (ev.clientX) {
+            //IE
+            mouse.x = ev.clientX + document.body.scrollLeft;
+            mouse.y = ev.clientY + document.body.scrollTop;
+          }
+        }
+
+        var rectangle = null;
+        canvas.onmousemove = function(e) {
+          setMousePosition(e);
+          if (rectangle !== null) {
+            rectangle.style.width = Math.abs(mouse.x - mouse.startX) + "px";
+            rectangle.style.height = Math.abs(mouse.y - mouse.startY) + "px";
+            rectangle.style.left =
+              mouse.x - mouse.startX < 0 ? mouse.x + "px" : mouse.startX + "px";
+            rectangle.style.top =
+              mouse.y - mouse.startY < 0 ? mouse.y + "px" : mouse.startY + "px";
+          }
+        };
+
+        canvas.onmouseup = function(e) {
+          if (rectangle !== null) {
+            rectangle = null;
+            canvas.style.cursor = "default";
+          }
+        };
+        function genNewColor() {
+          var hexChars = "6789ABCDEF".split("");
+          var newColor = "#";
+          for (var i = 0; i < 6; i++) {
+            newColor += hexChars[Math.floor(Math.random() * hexChars.length)];
+          }
+          return newColor;
+        }
+
+        function resetClearButton() {
+          if (canvas.childNodes.length > 0) {
+            clearButton.disabled = false;
+          } else {
+            clearButton.disabled = true;
+          }
+        }
+        canvas.onmousedown = function(e) {
+          mouse.startX = mouse.x;
+          mouse.startY = mouse.y;
+          rectangle = document.createElement("div");
+
+          rectangle.className = "rectangle";
+
+          rectangle.style.left = mouse.x + "px";
+          rectangle.style.top = mouse.y + "px";
+          rectangle.style.backgroundColor = genNewColor();
+          canvas.appendChild(rectangle);
+          resetClearButton();
+
+          rectangle.addEventListener("dblclick", function(e) {
+            canvas.removeChild(e.target);
+            resetClearButton();
+          });
+          rectangle.onmouseover = function(e) {
+            // to move/drag the current rectangle
+            // may affect the new-rectangle draw functionality
+            // rectangle.style.cursor = "move";
+          };
+          rectangle.onmouseout = function(e) {
+            // to finish move/drag of current rectangle
+            // may affect the new-rectangle draw functionality
+            rectangle.style.cursor = "default";
+          };
+
+          canvas.style.cursor = "crosshair";
+        };
+
+        resetClearButton();
+        clearButton.onclick = function(e) {
+          canvas.innerHTML = "";
+          clearButton.disabled = true;
+        };
+      }
+      initializeSimplePaintApp(
+        document.getElementById("canvas"),
+        document.getElementById("clearButton")
+      );
+    </script>
+  </body>
+</html>
