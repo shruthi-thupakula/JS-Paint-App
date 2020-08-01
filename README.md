@@ -7,3 +7,5 @@
 - Size of the rectangle will depend on how much the drag happened.
 - To clear total drawings, one can make use of clear button at the bottom.
 - Double clicking on a rectandle will delete the same.
+
+Demo : https://shruthi-thupakula.github.io/JS-Paint-App/
